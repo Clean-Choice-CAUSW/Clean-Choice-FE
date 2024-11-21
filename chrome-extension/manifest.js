@@ -19,14 +19,14 @@ const sidePanelConfig = {
 const manifest = deepmerge(
   {
     manifest_version: 3,
-    default_locale: 'en',
+    default_locale: 'ko',
     /**
      * if you want to support multiple languages, you can use the following reference
      * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization
      */
-    name: '__MSG_extensionName__',
+    name: 'Clean Choice',
     version: packageJson.version,
-    description: '__MSG_extensionDescription__',
+    description: 'Clean Choice',
     host_permissions: ['<all_urls>'],
     permissions: ['storage', 'scripting', 'tabs', 'notifications'],
     options_page: 'options/index.html',
@@ -36,13 +36,10 @@ const manifest = deepmerge(
     },
     action: {
       default_popup: 'popup/index.html',
-      default_icon: 'icon-34.png',
-    },
-    chrome_url_overrides: {
-      newtab: 'new-tab/index.html',
+      default_icon: 'logo.png',
     },
     icons: {
-      128: 'icon-128.png',
+      128: 'logo.png',
     },
     content_scripts: [
       {
