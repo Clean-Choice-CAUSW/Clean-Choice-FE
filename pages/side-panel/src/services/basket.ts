@@ -5,11 +5,10 @@ export const createBasket = async (basketName: string, authHeader: string) => {
   try {
     const res = await myAxios.post(
       "/shop-basket/create",
-      {},
+      { basketName },
       {
         headers: {
           Authorization: authHeader,
-          basketName,
         },
       },
     );
@@ -38,4 +37,31 @@ export const getBasketList = async (authHeader: string) => {
     throw new Error(error.message);
   }
   return null;
+};
+
+export const addProductToBasket = async (
+  productMarketId: number,
+  shopBasketId: number,
+  authHeader: string,
+) => {
+  try {
+    const res = await myAxios.post(
+      "/shop-basket/add-product",
+      {},
+      {
+        headers: {
+          Authorization: authHeader,
+          productMarketId: productMarketId,
+          shopBasketId: shopBasketId,
+        },
+      },
+    );
+
+    if (res.status === 201) {
+      return true;
+    }
+  } catch (error: any) {
+    alert(error.message);
+  }
+  return false;
 };

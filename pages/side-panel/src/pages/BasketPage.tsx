@@ -1,5 +1,7 @@
 import type { BasketResponse } from "@/@types/basket";
+import Basket from "@/components/basket/Basket";
 import { Button } from "@/components/ui/button";
+import { createBasket } from "@/services/basket";
 import myAxios from "@/services/myAxios";
 import { useCallback, useEffect, useState } from "react";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
@@ -7,6 +9,7 @@ import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 const NewBasketForm = ({ afterCreate }: { afterCreate: () => void }) => {
   const [name, setName] = useState("");
   const authHeader = useAuthHeader();
+  if (!authHeader) return null;
 
   const handleCreateBasket = async () => {
     if (!name) {
@@ -15,17 +18,8 @@ const NewBasketForm = ({ afterCreate }: { afterCreate: () => void }) => {
     }
     try {
       console.log(authHeader);
-      const res = await myAxios.post(
-        "/shop-basket/create",
-        {},
-        {
-          headers: {
-            Authorization: authHeader,
-            basketName: name,
-          },
-        },
-      );
-      if (res.status === 201) {
+      const res = await createBasket(name, authHeader);
+      if (res) {
         alert("장바구니가 생성되었습니다.");
         setName("");
       }
@@ -86,13 +80,7 @@ export default function CartPage() {
           <p className="text-center text-sm">아직 장바구니가 없습니다.</p>
         )}
         {basketList.map((basket) => (
-          <div
-            key={basket.id}
-            className="flex items-center justify-between border-b border-gray-300 p-2"
-          >
-            <p>{basket.name}</p>
-            <p>{basket.createdAt}</p>
-          </div>
+          <Basket key={basket.id} basket={basket} afterAdd={fetchBasketList} />
         ))}
       </div>
     </div>

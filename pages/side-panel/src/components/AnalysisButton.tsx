@@ -1,15 +1,19 @@
 import { analyzeProduct } from "@/services/product";
+import { useAnalyzedProductStore } from "@/store/analyzedProductStore";
+import { useState } from "react";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { Button } from "./ui/button";
 
 export const AnalysisButton = () => {
   const authHeader = useAuthHeader();
+  const [analyzing, setAnalyzing] = useState(false);
+  const { setAnalyzedProduct } = useAnalyzedProductStore();
 
   if (!authHeader) return null;
 
   return (
     <Button
-      className="w-[70px]"
+      className={`w-[70px] ${analyzing && "animate-pulse"}`}
       onClick={async () => {
         // get current main page's url
         const [tab] = await chrome.tabs.query({
@@ -17,13 +21,16 @@ export const AnalysisButton = () => {
           lastFocusedWindow: true,
         });
         if (tab && tab.url) {
-          alert(tab.url);
+          setAnalyzing(true);
           const result = await analyzeProduct(tab.url, "AMAZON", authHeader);
-          console.log(JSON.stringify(result));
+          if (result) {
+            setAnalyzedProduct(result);
+          }
+          setAnalyzing(false);
         }
       }}
     >
-      분석하기
+      {analyzing ? "분석 중" : "분석하기"}
     </Button>
   );
 };

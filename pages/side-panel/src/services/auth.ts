@@ -1,4 +1,4 @@
-import type { SignInResponse, SignUpRequest } from "@/@types/auth";
+import type { SignInResponse, SignUpRequest, User } from "@/@types/auth";
 import myAxios from "./myAxios";
 
 export const signUp = async (request: SignUpRequest) => {
@@ -19,10 +19,26 @@ export const signIn = async (loginId: string, password: string) => {
       const data = res.data as SignInResponse;
       return data;
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     alert(error.message);
   }
 
   throw new Error("Failed to login");
+};
+
+export const fetchMe = async (authHeader: string) => {
+  try {
+    const res = await myAxios.get("/member/me", {
+      headers: {
+        Authorization: authHeader,
+      },
+    });
+
+    if (res.status === 200) {
+      return res.data as User;
+    }
+  } catch (error: any) {
+    alert(error.message);
+  }
+  return null;
 };

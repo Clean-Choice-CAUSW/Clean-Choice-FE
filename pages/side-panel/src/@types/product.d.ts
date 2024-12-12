@@ -1,7 +1,15 @@
+import type { ProductMarketResponseDto } from "@/@types/product";
+import type { IngredientResponseDto } from "./product.d";
 interface BanedIngredientInfoResponseDto {
   id: number;
   ingredientId: number;
-  banType: "OLD_CAUTION" | "PREGNANT_BANED";
+  banType:
+    | "OLD_CAUTION"
+    | "PREGNANT_BANED"
+    | "PERIOD_CAUTION"
+    | "VOLUME_CAUTION"
+    | "AGE_BANED"
+    | "DUPLICATE_EFFICACY";
   banTypeDescription: string;
   description: string;
   createdAt: string;
@@ -21,7 +29,7 @@ interface CombineUseBanedIngredientInfoResponseDto {
   updatedAt: string;
 }
 
-interface IngredientResponseDto {
+export interface IngredientResponseDto {
   id: number;
   englishCategory: string;
   koreanCategory: string;
@@ -41,7 +49,7 @@ interface ProductIngredientJoinResponseDto {
   ingredientResponseDto: IngredientResponseDto;
   servingSize: number;
   servingUnit: string;
-  amountPerServing: number;
+  amountPerServing: string;
   amountPerServingUnit: string;
   dailyValuePerServing: number;
   englishDailyValueTargetGroup: string;
@@ -95,11 +103,23 @@ export interface ProductResponseDto {
 
 export interface ProductMarketResponseDto {
   id: number;
-  productResponseDTO: ProductResponseDto;
-  url: string;
+  productResponseDto: ProductResponseDto;
+  imageUrl: string;
+  url: string; // url에서 market 정보 추출
   price: number;
   priceUnit: string;
-  analyzeType: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AnalyzeResponseDto {
+  id: number;
+  productResponseDto: ProductResponseDto;
+  imageUrl: string;
+  url: string; // url에서 market 정보 추출
+  price: number;
+  priceUnit: string;
+  analyzeType: "LLM_PARSED" | "DB_COSINE_DISTANCE";
   createdAt: string;
   updatedAt: string;
 }
@@ -111,6 +131,31 @@ export interface AnalyzeRequest {
   imageUrl: string;
   price: number;
   priceUnit: string;
+  imageUrlList: string[];
+  html: string;
 }
 
 export type Market = "AMAZON" | "IHERB" | "GNC" | "ETC";
+
+export type ViewRecord = {
+  id: number;
+  memberId: number;
+  productMarketResponseDto: ProductMarketResponseDto;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export interface ViewRecordResponse extends Array<ViewRecord> {}
+
+export type IntakeResponse = {
+  id: number;
+  memberId: number;
+  ingredientResponseDto: IngredientResponseDto;
+  fakeName: string;
+  amount: number;
+  unit: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export interface IntakeResponseDto extends Array<IntakeResponse> {}

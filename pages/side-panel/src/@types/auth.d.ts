@@ -18,6 +18,6 @@ export interface User {
   loginId: string;
   name: string;
   age: number;
-  gender: string;
+  gender: "MALE" | "FEMALE";
   isPregnant: boolean;
 }

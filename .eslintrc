@@ -33,6 +33,7 @@
     "import/no-unresolved": "off",
     "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/no-explicit-any": "off",
+    "tailwindcss/no-custom-classname": "off",
   },
   "globals": {
     "chrome": "readonly",
