@@ -22,19 +22,29 @@
     "@extension/shared": "workspace:*",
     "@extension/storage": "workspace:*",
     "@radix-ui/react-slot": "^1.1.0",
+    "axios": "^1.7.9",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.460.0",
+    "react-auth-kit": "^3.1.3",
+    "react-cookie": "^7.2.2",
+    "react-hook-form": "^7.54.0",
     "tailwind-merge": "^2.4.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@extension/tailwindcss-config": "workspace:*",
     "@extension/tsconfig": "workspace:*",
     "@extension/vite-config": "workspace:*",
+    "@iconify/tailwind": "^1.2.0",
+    "@tailwindcss/line-clamp": "^0.4.4",
     "@types/node": "^20.16.5",
     "cross-env": "^7.0.3",
-    "postcss-load-config": "^6.0.1"
+    "daisyui": "^4.12.20",
+    "postcss-load-config": "^6.0.1",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.9"
   },
   "postcss": {
     "plugins": {

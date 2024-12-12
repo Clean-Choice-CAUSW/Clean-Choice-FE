@@ -1,7 +1,8 @@
 export enum PageState {
-  ANALYSIS = 'ANALYSIS',
-  CART = 'CART',
-  COMPARE = 'COMPARE',
-  CUSTOM = 'CUSTOM',
-  LOGIN = 'LOGIN',
+  ANALYSIS = "ANALYSIS",
+  BASKET = "BASKET",
+  COMPARE = "COMPARE",
+  CUSTOM = "CUSTOM",
+  LOGIN = "LOGIN",
+  REGISTER = "REGISTER",
 }

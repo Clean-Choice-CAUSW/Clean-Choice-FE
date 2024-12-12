@@ -1,5 +1,5 @@
-import '@/index.css';
 import SidePanel from '@/SidePanel';
+import '@/index.css';
 import { createRoot } from 'react-dom/client';
 
 function init() {

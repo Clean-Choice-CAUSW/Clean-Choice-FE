@@ -1,5 +1,3 @@
-import { Button } from '@/components/ui/button';
-
 const BeforeAnalysis = () => {
   return (
     <p className="text-xl">
@@ -10,27 +8,25 @@ const BeforeAnalysis = () => {
   );
 };
 
-const AnalysisButton = () => {
-  return (
-    <Button
-      onClick={async () => {
-        // get current main page's url
-        const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-        console.log(tab);
-        if (tab) {
-          alert(tab.url);
-        }
-      }}>
-      분석하기
-    </Button>
-  );
+// interface SummaryProps {
+//   title: string;
+//   price: number;
+//   priceUnit: string;
+//   image: string;
+//   ingredients: {
+//     name: string;
+//   };
+// }
+
+const Summary = () => {
+  return <div className="grid w-full grid-cols-[1fr_150xp] p-2"></div>;
 };
 
 export default function AnalysisPage() {
   return (
     <div className="relative flex h-full flex-col items-center justify-center">
-      <AnalysisButton />
       <BeforeAnalysis />
+      <Summary />
     </div>
   );
 }
