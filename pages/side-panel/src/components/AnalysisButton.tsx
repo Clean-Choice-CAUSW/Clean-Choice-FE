@@ -1,3 +1,4 @@
+import detectMarket from "@/lib/detectMarket";
 import { analyzeProduct } from "@/services/product";
 import { useAnalyzedProductStore } from "@/store/analyzedProductStore";
 import { useState } from "react";
@@ -22,7 +23,14 @@ export const AnalysisButton = () => {
         });
         if (tab && tab.url) {
           setAnalyzing(true);
-          const result = await analyzeProduct(tab.url, "AMAZON", authHeader);
+          if (detectMarket(tab.url) === "ETC") {
+            alert("대상 직구 사이트가 아닙니다.");
+          }
+          const result = await analyzeProduct(
+            tab.url,
+            detectMarket(tab.url),
+            authHeader,
+          );
           if (result) {
             setAnalyzedProduct(result);
           }

@@ -40,7 +40,7 @@ const App = () => {
       const res = await fetchMe(authHeader);
       if (!res) {
         alert("유저 정보를 불러올 수 없습니다. ");
-        // signOut();
+        signOut();
         return;
       }
       setUserState(res);
@@ -61,7 +61,7 @@ const App = () => {
 
   return (
     <div className="App grid grid-cols-[1fr_80px]">
-      <div className={`w-full bg-slate-50 p-1`}>
+      <div className={`w-full overflow-y-auto bg-slate-50 p-1`}>
         {pageState === PageState.ANALYSIS && <AnalysisPage />}
         {pageState === PageState.BASKET && <CartPage />}
         {pageState === PageState.COMPARE && <ComparePage />}

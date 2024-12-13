@@ -125,6 +125,7 @@ export default function SelectBasket() {
                 imageSrc={p.imageUrl}
                 market={detectMarket(p.url)}
                 name={p.productResponseDto.name}
+                productMarketResponseDto={p}
               />
             );
           })}

@@ -1,6 +1,7 @@
 import type { ProductMarketResponseDto } from "@/@types/product";
 import detectMarket from "@/lib/detectMarket";
 import { fetchViewRecord } from "@/services/product";
+import { useAnalyzedProductStore } from "@/store/analyzedProductStore";
 import { useEffect, useState } from "react";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import MarketProductButton from "./product/MarketProductButton";
@@ -8,6 +9,7 @@ import MarketProductButton from "./product/MarketProductButton";
 export default function ViewedProducts() {
   const [products, setProducts] = useState<ProductMarketResponseDto[]>([]);
   const authHeader = useAuthHeader();
+  const { analyzedProduct } = useAnalyzedProductStore();
 
   useEffect(() => {
     const fetch = async () => {
@@ -16,7 +18,7 @@ export default function ViewedProducts() {
       setProducts(data);
     };
     fetch();
-  }, [authHeader]);
+  }, [authHeader, analyzedProduct]);
 
   if (!authHeader) return null;
 
@@ -34,6 +36,7 @@ export default function ViewedProducts() {
                 imageSrc={p.imageUrl}
                 market={detectMarket(p.url)}
                 name={p.productResponseDto.name}
+                productMarketResponseDto={p}
               />
             );
           })}

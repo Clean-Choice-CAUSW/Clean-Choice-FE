@@ -29,15 +29,16 @@ export const searchIngredientWithExactName = async (
   authHeader: string,
 ) => {
   try {
-    const res = await myAxios.get("/ingredient/search/name", {
-      headers: {
-        Authorization: authHeader,
+    const res = await myAxios.post(
+      "/ingredient/search/name",
+      { ingredientName: name },
+      {
+        headers: {
+          Authorization: authHeader,
+        },
       },
-      params: {
-        name,
-      },
-    });
-    if (res.status === 200) return res.data as IngredientResponseDto;
+    );
+    if (res.status === 200) return res.data as IngredientResponseDto[];
   } catch (error: any) {
     throw new Error(error.message);
   }

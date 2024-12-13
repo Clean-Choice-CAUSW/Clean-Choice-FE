@@ -1,4 +1,6 @@
-import type { Market } from "@/@types/product";
+import type { AnalyzeResponseDto, Market } from "@/@types/product";
+import { useAnalyzedProductStore } from "@/store/analyzedProductStore";
+import type { ProductMarketResponseDto } from "../../@types/product";
 import MarketImage from "./MarketImage";
 
 interface MarketProductButtonProps {
@@ -8,6 +10,7 @@ interface MarketProductButtonProps {
   name: string;
   onSelect?: () => void;
   borderColor?: string;
+  productMarketResponseDto?: ProductMarketResponseDto;
 }
 
 export default function MarketProductButton({
@@ -17,7 +20,10 @@ export default function MarketProductButton({
   name,
   onSelect,
   borderColor,
+  productMarketResponseDto,
 }: MarketProductButtonProps) {
+  const { setAnalyzedProduct } = useAnalyzedProductStore();
+
   return (
     <button
       className={`flex flex-col items-center gap-2 rounded-md border-2 ${borderColor ? ` ${borderColor}` : "border-transparent"}`}
@@ -26,6 +32,10 @@ export default function MarketProductButton({
           ? onSelect
           : () => {
               window.open(url);
+              productMarketResponseDto &&
+                setAnalyzedProduct(
+                  productMarketResponseDto as AnalyzeResponseDto,
+                );
             }
       }
     >

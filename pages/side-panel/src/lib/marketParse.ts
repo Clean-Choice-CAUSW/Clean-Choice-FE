@@ -49,11 +49,10 @@ const marketParser: Record<
         "#corePriceDisplay_desktop_feature_div > div.a-section.a-spacing-none.aok-align-center.aok-relative > span.a-price.aok-align-center.reinventPricePriceToPayMargin.priceToPay > span:nth-child(2) > span.a-price-fraction",
       )
       ?.textContent?.trim();
-    if (!priceWhole) {
-      throw new Error("가격을 찾을 수 없습니다.");
-    }
 
-    const price = Number(priceWhole + (priceFraction ? priceFraction : ""));
+    const price = priceWhole
+      ? Number(priceWhole + (priceFraction ? priceFraction : ""))
+      : null;
     // TODO : other than USD
     const priceUnit = "USD";
 
@@ -118,16 +117,74 @@ const marketParser: Record<
 
   GNC: async (url) => {
     const html = await fetch(url).then((res) => res.text());
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+    const productName = doc
+      .querySelector(
+        "#product-content > section > div.product-detail-area-container.container > div.row.parent-row.prod-quick-view-container.product-redesign > div.product-image-container-redesign.col-lg-5 > div.pdp__product-details__product-title.d-none.d-lg-flex > h1",
+      )
+      ?.textContent?.trim();
+    if (!productName) {
+      throw new Error("상품명을 찾을 수 없습니다.");
+    }
+    const brandName = doc
+      .querySelector(
+        "#product-content > section > div.product-detail-area-container.container > div.row.parent-row.prod-quick-view-container.product-redesign > div.product-image-container-redesign.col-lg-5 > div.brand-item-wrapper.pdp-redesign.d-sm-none.d-lg-block > div > a",
+      )
+      ?.textContent?.trim();
+    if (!brandName) {
+      throw new Error("브랜드명을 찾을 수 없습니다.");
+    }
+    let price: number | null = Number(
+      doc
+        .querySelector(
+          "#product-content > section > div.product-detail-area-container.container > div.row.parent-row.prod-quick-view-container.product-redesign > div.col-lg-7.pdp__product-details.product-detail.test3.col-xs-12 > div.sale-content.d-none.d-lg-flex > div > div.pdp__product-details__product-price-wrap.d-flex.align-items-center > span",
+        )
+        ?.getAttribute("content")
+        ?.trim(),
+    );
+    if (Number.isNaN(price)) {
+      price = null;
+    }
+    const priceUnit = "USD";
+
+    const imageListDiv = doc.querySelector("#thumbnails > div");
+    const imageUrlList = imageListDiv
+      ? Array.from(imageListDiv.querySelectorAll("a")).map(
+          (img) => img.getAttribute("preview-src") || "",
+        )
+      : undefined;
+    if (!imageUrlList) {
+      throw new Error("이미지 목록을 찾을 수 없습니다.");
+    }
+    const imageUrl = imageUrlList[0];
+    if (!imageUrl) {
+      throw new Error("gnc 이미지를 찾을 수 없습니다.");
+    }
+
+    const details =
+      doc.querySelector("#productDetailsTab > div")?.textContent?.trim() || "";
+    const ingredients = doc
+      .querySelector("#productNutritionTab > div")
+      ?.textContent?.trim();
+    const usage = doc
+      .querySelector("#productHowToUseTab > div")
+      ?.textContent?.trim();
+
+    const productDetailsHtml = (details + ingredients + usage)
+      .replace(/\s+/g, " ")
+      .replace(/>\s+</g, "><")
+      .trim();
 
     return {
       url,
-      productName: "",
-      brandName: "",
-      imageUrl: "",
-      price: 0,
-      priceUnit: "",
-      imageUrlList: [],
-      html: "",
+      productName,
+      brandName,
+      imageUrl,
+      price,
+      priceUnit,
+      imageUrlList: imageUrlList || [imageUrl],
+      html: productDetailsHtml,
     };
   },
 };

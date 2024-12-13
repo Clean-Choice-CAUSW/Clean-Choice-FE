@@ -10,7 +10,7 @@ import {
   deleteUserIntake,
   getAdvice,
   getUserIntake,
-  searchIngredientWithPart,
+  searchIngredientWithExactName,
 } from "@/services/ingredient";
 import userStore from "@/store/userStore";
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group";
@@ -120,11 +120,15 @@ export default function CustomForm({
   if (!currUser || !authHeader) return null;
 
   useEffect(() => {
-    if (searchIngredientName === "" || !searching) return;
+    if (searchIngredientName === "") {
+      setSearching(false);
+      return;
+    }
+    if (!searching) return;
     const fetchSearchResult = async () => {
       setSearchResultLoading(true);
       try {
-        const res = await searchIngredientWithPart(
+        const res = await searchIngredientWithExactName(
           searchIngredientName,
           authHeader,
         );
@@ -153,7 +157,7 @@ export default function CustomForm({
         currUser.gender,
         currUser.isPregnant,
         intakingList.map((i) => i.ingredientResponseDto.englishName),
-        selectedProduct.productResponseDto.id,
+        selectedProduct.id,
         authHeader,
       );
       if (res) setAdvice(res);
@@ -192,9 +196,6 @@ export default function CustomForm({
                 setSearching(true);
               }}
               onFocus={() => setSearching(true)}
-              onBlur={() => {
-                setSearching(false);
-              }}
             />
             {searching && (
               <div className="absolute top-[38px] flex min-h-5 w-full flex-col rounded-md border border-gray-300 bg-white shadow-md">
@@ -208,6 +209,8 @@ export default function CustomForm({
                         onClick={async () => {
                           await addUserIntake(r.id, authHeader);
                           await fetchIntaking();
+                          setSearchIngredientName("");
+                          setSearching(false);
                         }}
                       >
                         {r.englishName}
@@ -256,10 +259,12 @@ export default function CustomForm({
         </div>
       </div>
       <div className="flex flex-col gap-[20px] overflow-y-auto">
-        <p className="text-lg">
+        <p className="text-start text-lg">
           입력하신 정보를 바탕으로 주의 사항을 알려드려요
         </p>
-        <p className="size-full rounded-md border border-gray-300">{advice}</p>
+        <p className="size-full whitespace-pre-wrap rounded-md border border-gray-300 text-start">
+          {advice}
+        </p>
       </div>
     </>
   );

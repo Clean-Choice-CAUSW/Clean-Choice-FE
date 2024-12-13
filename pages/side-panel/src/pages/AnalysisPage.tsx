@@ -7,6 +7,7 @@ import MarketImage from "@/components/product/MarketImage";
 import ProductTable from "@/components/product/ProductTable";
 import { Button } from "@/components/ui/button";
 import ViewedProducts from "@/components/ViewedProducts";
+import detectMarket from "@/lib/detectMarket";
 import { createShopRecord } from "@/services/product";
 import { useAnalyzedProductStore } from "@/store/analyzedProductStore";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
@@ -66,6 +67,7 @@ const Analysis = ({ analyzed }: { analyzed: AnalyzeResponseDto }) => {
                     key={i.id}
                     name={i.ingredientResponseDto.englishName}
                     description={i.ingredientResponseDto.effectiveness}
+                    isClearanceBaned={i.ingredientResponseDto.isClearanceBaned}
                     bannedIngredientInfo={
                       i.ingredientResponseDto.banedIngredientInfoResponseDtoList
                     }
@@ -78,7 +80,7 @@ const Analysis = ({ analyzed }: { analyzed: AnalyzeResponseDto }) => {
             <ClearanceTooltip clearanceBannedList={clearanceBannedList} />
             <MarketImage
               imageSrc={analyzed.imageUrl}
-              market="AMAZON"
+              market={detectMarket(analyzed.url)}
               size={150}
             />
           </div>

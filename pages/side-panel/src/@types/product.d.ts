@@ -129,8 +129,8 @@ export interface AnalyzeRequest {
   productName: string;
   brandName: string;
   imageUrl: string;
-  price: number;
-  priceUnit: string;
+  price: number | null;
+  priceUnit: string | null;
   imageUrlList: string[];
   html: string;
 }

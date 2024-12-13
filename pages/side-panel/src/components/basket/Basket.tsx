@@ -1,21 +1,28 @@
 import type { BasketResponse } from "@/@types/basket";
 import { addProductToBasket } from "@/services/basket";
+import { createShopRecord } from "@/services/product";
 import { useAnalyzedProductStore } from "@/store/analyzedProductStore";
-import { useState } from "react";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import detectMarket from "../../lib/detectMarket";
+import ClearanceTooltip from "../ClearanceTooltip";
+import IngredientsTooltip from "../IngredientsTooltip";
+import IngredientTag from "../IngredientTag";
+import MarketImage from "../product/MarketImage";
 import MarketProductButton from "../product/MarketProductButton";
 import { Button } from "../ui/button";
 
 export default function Basket({
   basket,
   afterAdd,
+  isOpened,
+  onClick,
 }: {
   basket: BasketResponse;
+  isOpened: boolean;
   afterAdd: () => void;
+  onClick: () => void;
 }) {
-  const [isOpened, setIsOpened] = useState(false);
-  const handleToggle = () => setIsOpened(!isOpened);
+  const handleToggle = () => onClick();
   const products = basket.shopBasketProductJoinResponseDtoList;
   const authHeader = useAuthHeader();
 
@@ -34,8 +41,17 @@ export default function Basket({
     }
   };
 
+  const rate = 1430.02;
+
+  const buyConfirm = async (id: number) => {
+    // 구매 확정
+    if (await createShopRecord(id, authHeader)) {
+      alert("구매 확정이 완료되었습니다.");
+    }
+  };
+
   return (
-    <div className="flex w-[calc(100vw-110px)] flex-col border-b border-gray-300 px-[25px]">
+    <div className="flex w-[calc(100vw-110px)] flex-col border-b border-gray-300 px-[15px]">
       <div className="flex items-start justify-between">
         <button onClick={handleToggle} className="flex gap-2 text-lg">
           <p className="max-w-[170px] overflow-x-auto whitespace-nowrap font-bold">
@@ -72,6 +88,68 @@ export default function Basket({
                 );
               })}
             </div>
+          </div>
+        )}
+        {isOpened && (
+          <div className="flex flex-col gap-2">
+            {products.map(({ productMarketResponseDto: p }) => {
+              if (!p.url) return null;
+              const ingredients =
+                p.productResponseDto.productIngredientJoinResponseDtoList;
+              const clearanceBannedList = ingredients.filter(
+                (i) => i.ingredientResponseDto.isClearanceBaned,
+              );
+              return (
+                <div
+                  key={p.id}
+                  className="flex items-start justify-between gap-[18px] border-b border-gray-300 pb-2"
+                >
+                  <div className="flex max-w-[327px] flex-col items-start">
+                    <p className="mb-[10px] text-start text-lg">
+                      {p.productResponseDto.name}
+                    </p>
+                    <Button
+                      className="h-[40px] w-[80px] bg-blue-600 text-white"
+                      onClick={async () => await buyConfirm(p.id)}
+                    >
+                      구매 확정
+                    </Button>
+                    <p className="text-lg">
+                      {p.price}$ (약 {(p.price * rate).toFixed(2)} 원)
+                    </p>
+                    <IngredientsTooltip />
+                    <div className="flex gap-[5px]">
+                      {ingredients.map((i) => {
+                        return (
+                          <IngredientTag
+                            key={i.id}
+                            name={i.ingredientResponseDto.englishName}
+                            description={i.ingredientResponseDto.effectiveness}
+                            isClearanceBaned={
+                              i.ingredientResponseDto.isClearanceBaned
+                            }
+                            bannedIngredientInfo={
+                              i.ingredientResponseDto
+                                .banedIngredientInfoResponseDtoList
+                            }
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end justify-between">
+                    <ClearanceTooltip
+                      clearanceBannedList={clearanceBannedList}
+                    />
+                    <MarketImage
+                      imageSrc={p.imageUrl}
+                      market={detectMarket(p.url)}
+                      size={130}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
